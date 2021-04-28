@@ -91,6 +91,11 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
     return 0;
 }
 
+void *worker_thread(void *arg)
+{
+    
+}
+
 int main(int argc, char *argv[]) {
 
     if (argc != 4) {
@@ -112,7 +117,6 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < 32 - desired_difficulty; i++) {
         difficulty_mask = difficulty_mask | 1 << i;
     }
-    
 
     printf("  Difficulty Mask: ");
     print_binary32(difficulty_mask);
@@ -129,12 +133,23 @@ int main(int argc, char *argv[]) {
 
     uint8_t digest[SHA1_HASH_SIZE];
 
+    /* create worker threads */
+    pthread_t *workers = malloc(num_threads * sizeof(pthread_t));
+    for (int i = 0; i < num_threads; i++) {
+            pthread_create(
+            &workers[i],
+            NULL,
+            worker_thread,
+            ((void *) (unsigned long) i));
+    }
+
     /* Mine the block. */
     uint64_t nonce = mine(
             bitcoin_block_data,
             difficulty_mask,
             1, UINT64_MAX,
             digest);
+            
 
     double end_time = get_time();
 
