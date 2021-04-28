@@ -91,18 +91,29 @@ void queue_destory(struct queue *q)
     free(q);
 }
 
-void main()
-{
-    struct queue* q1 = queue_init();
-
-    queue_offer(q1, 1);
-    queue_offer(q1, 2);
-    queue_offer(q1, 3);
-    queue_offer(q1, 4);
-
-    int num = queue_poll(q1);
-
-    printf("poll: %d", num);
-    queue_print(q1);
-    queue_destory(q1);
+int queue_size(struct queue *q) {
+    return q->size;
 }
+
+// void main()
+// {
+//     struct queue* q1 = queue_init();
+
+//     queue_offer(q1, 1);
+//     queue_offer(q1, 2);
+//     queue_offer(q1, 3);
+//     queue_offer(q1, 4);
+//     queue_offer(q1, 5);
+
+//     int count = queue_size(q1);
+//     printf("size: %d\n", count);
+
+//     while (queue_size(q1) > 0)
+//     {
+//         int num = queue_poll(q1);
+//         printf("poll: %d\n", num);
+//     }
+    
+//     queue_print(q1);
+//     queue_destory(q1);
+// }
