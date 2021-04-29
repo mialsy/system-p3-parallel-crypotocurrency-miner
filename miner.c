@@ -74,6 +74,8 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
         uint64_t nonce_start, uint64_t nonce_end,
         uint8_t digest[SHA1_HASH_SIZE]) {
 
+    unsigned long long inversions = 0;
+
     for (uint64_t nonce = nonce_start; nonce < nonce_end; nonce++) {
         /* A 64-bit unsigned number can be up to 20 characters  when printed: */
         size_t buf_sz = sizeof(char) * (strlen(data_block) + 20 + 1);
@@ -87,7 +89,7 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
         /* Hash the combined string */
         sha1sum(digest, (uint8_t *) buf, strlen(buf));
         free(buf);
-        total_inversions++;
+        inversions++;
 
         /* Get the first 32 bits of the hash */
         uint32_t hash_front = 0;
@@ -100,9 +102,15 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
         if ((hash_front & difficulty_mask) == hash_front) {
             LOG("nounce %ld\n", nonce);
             print_binary32(hash_front);
+            pthread_mutex_lock(&mutex);
+            total_inversions += inversions;
+            pthread_mutex_unlock(&mutex);
             return nonce;
         }
     }
+    pthread_mutex_lock(&mutex);
+    total_inversions += inversions;
+    pthread_mutex_unlock(&mutex);
 
     return 0;
 }
