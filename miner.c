@@ -75,6 +75,7 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
         uint8_t digest[SHA1_HASH_SIZE]) {
 
     unsigned long long inversions = 0;
+    LOG("input: %s", data_block);
 
     for (uint64_t nonce = nonce_start; nonce < nonce_end; nonce++) {
         /* A 64-bit unsigned number can be up to 20 characters  when printed: */
@@ -199,7 +200,7 @@ int main(int argc, char *argv[]) {
     /* We use the input string passed in (argv[3]) as our block data. In a
      * complete bitcoin miner implementation, the block data would be composed
      * of bitcoin transactions. */
-    char *bitcoin_block_data = argv[3];
+    bitcoin_block_data = argv[3];
     printf("       Block data: [%s]\n", bitcoin_block_data);
 
     printf("\n----------- Starting up miner threads!  -----------\n\n");
