@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "logger.h"
+
 struct qnode
 {
     uint64_t data;
@@ -80,21 +82,19 @@ void queue_print(struct queue *q)
     printf("NULL\n");
 }
 
+int queue_size(struct queue *q) {
+    return q->size;
+}
+
 void queue_destory(struct queue *q)
 {
-    struct qnode *head = q->head;
-    struct qnode *current;
-    while (head != NULL) {
-        current = head;
-        head = head->next;
-        free(current);
+    while (queue_size(q) > 0) {
+        queue_poll(q);
     }
     free(q);
 }
 
-int queue_size(struct queue *q) {
-    return q->size;
-}
+
 
 // void main()
 // {

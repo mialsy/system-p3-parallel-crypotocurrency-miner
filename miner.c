@@ -232,9 +232,11 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < num_threads; i++)
     {
+        LOGP("join\n");
         pthread_join(workers[i], NULL);
     }
     free(workers);
+    LOGP("end join\n");
     queue_destory(task_queue);
 
     if (found_nounce == 0) {
