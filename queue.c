@@ -16,6 +16,10 @@ struct queue
     size_t size;
 };
 
+int queue_size(struct queue *q) {
+    return q->size;
+}
+
 struct queue *queue_init()
 {
     struct queue *q = malloc(sizeof(struct queue));
@@ -30,9 +34,11 @@ int queue_offer(struct queue *q, uint64_t data)
     struct qnode *new_node = malloc(sizeof(struct qnode));
     if (new_node == NULL)
     {
+
         free(new_node);
         return -1;
     }
+
     new_node->data = data;
 
     if (q->head == NULL)
@@ -65,6 +71,7 @@ uint64_t queue_poll(struct queue *q)
 
     if (q->size == 0)
     {
+        q->head = NULL;
         q->tail = NULL;
     }
     free(old_head);
@@ -80,10 +87,6 @@ void queue_print(struct queue *q)
         current = current->next;
     }
     printf("NULL\n");
-}
-
-int queue_size(struct queue *q) {
-    return q->size;
 }
 
 void queue_destory(struct queue *q)
