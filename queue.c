@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 struct qnode
 {
-    int data;
+    uint64_t data;
     struct qnode *next;
 };
 
 struct queue
 {
     struct qnode *head, *tail;
-    int size;
+    size_t size;
 };
 
 struct queue *queue_init()
@@ -22,7 +23,7 @@ struct queue *queue_init()
     return q;
 }
 
-int queue_offer(struct queue *q, int data)
+int queue_offer(struct queue *q, uint64_t data)
 {
     struct qnode *new_node = malloc(sizeof(struct qnode));
     if (new_node == NULL)
@@ -47,7 +48,7 @@ int queue_offer(struct queue *q, int data)
     return 0;
 }
 
-int queue_poll(struct queue *q)
+uint64_t queue_poll(struct queue *q)
 {
     if (q->size == 0)
     {
@@ -73,7 +74,7 @@ void queue_print(struct queue *q)
     struct qnode *current = q->head;
     while (current != NULL)
     {
-        printf("%d -> ", current->data);
+        printf("%ld -> ", current->data);
         current = current->next;
     }
     printf("NULL\n");

@@ -35,10 +35,23 @@
 #include <sys/time.h>
 
 #include "logger.h"
-
+#include "queue.h"
 #include "sha1.h"
 
+#define RANGE 10000
+
 unsigned long long total_inversions;
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t condc = PTHREAD_COND_INITIALIZER;
+pthread_cond_t condp = PTHREAD_COND_INITIALIZER;
+
+struct queue *task_queue;
+uint64_t found_nounce = 0;
+long found_rank = -1;
+uint8_t digest[SHA1_HASH_SIZE];
+char *bitcoin_block_data = "";
+uint32_t difficulty_mask = 0;
 
 double get_time()
 {
@@ -91,9 +104,60 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
     return 0;
 }
 
-void *worker_thread(void *arg)
+void *worker_thread(void *ptr)
 {
-    
+    long rank = (long)ptr;
+    uint64_t start = 0;
+
+    while (true)
+    {
+        pthread_mutex_lock(&mutex);
+        if (found_nounce != 0) {
+            pthread_mutex_unlock(&mutex);
+            pthread_cond_signal(&condp);
+            break;
+        }
+
+        while (queue_size(task_queue) == 0)
+        {
+            pthread_cond_wait(&condc, &mutex);
+        }
+        start = queue_poll(task_queue);
+
+        pthread_mutex_unlock(&mutex);
+
+        /* Mine the block. */
+        uint64_t end = start + RANGE - 1;
+        end = end < start ? UINT64_MAX: end;
+
+        LOG("mine range [%ld-%ld]\n", start, end);
+
+        uint64_t nonce = mine(
+            bitcoin_block_data,
+            difficulty_mask,
+            start, end,
+            digest);
+
+        LOG("nounce %ld\n", nonce);
+
+        pthread_mutex_lock(&mutex);
+        if (nonce != 0)
+        {
+            if (found_nounce == 0) {
+                found_nounce = nonce;
+                found_rank = rank;
+            } 
+            pthread_mutex_unlock(&mutex);
+            pthread_cond_signal(&condp);
+            pthread_cond_broadcast(&condc);
+            break;
+        }
+
+        /* Wake up the producer */
+        pthread_mutex_unlock(&mutex);
+        pthread_cond_signal(&condp);
+    }
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -110,8 +174,6 @@ int main(int argc, char *argv[]) {
     // TODO refactor to strcol
     int desired_difficulty = atoi(argv[2]);
     LOG("difficulty: %d\n", desired_difficulty);
-
-    uint32_t difficulty_mask = 0;
 
     // set difficulty
     for (int i = 0; i < 32 - desired_difficulty; i++) {
@@ -131,9 +193,9 @@ int main(int argc, char *argv[]) {
 
     double start_time = get_time();
 
-    uint8_t digest[SHA1_HASH_SIZE];
+    /* init task queue */
+    task_queue = queue_init();
 
-    /* create worker threads */
     pthread_t *workers = malloc(num_threads * sizeof(pthread_t));
     for (int i = 0; i < num_threads; i++) {
             pthread_create(
@@ -143,17 +205,39 @@ int main(int argc, char *argv[]) {
             ((void *) (unsigned long) i));
     }
 
-    /* Mine the block. */
-    uint64_t nonce = mine(
-            bitcoin_block_data,
-            difficulty_mask,
-            1, UINT64_MAX,
-            digest);
-            
+    /* create worker threads */    
+    uint64_t i;
+    for (i = 1; i < UINT64_MAX; i += RANGE) {
+        pthread_mutex_lock(&mutex);
+        while (queue_size(task_queue) == num_threads && found_nounce == 0)
+        {
+            pthread_cond_wait(&condp, &mutex);
+        }
+
+        if (found_nounce != 0)
+        {
+            printf("%ld found %ld\n", found_rank, found_nounce);
+            pthread_mutex_unlock(&mutex);
+            break;
+        }
+        /* Time to produce a new value: */
+        LOG("produce %ld\n", i);
+        queue_offer(task_queue, i);
+        /* Wake up consumer */
+        pthread_cond_signal(&condc);
+        pthread_mutex_unlock(&mutex);
+    }
 
     double end_time = get_time();
 
-    if (nonce == 0) {
+    for (int i = 0; i < num_threads; i++)
+    {
+        pthread_join(workers[i], NULL);
+    }
+    free(workers);
+    queue_destory(task_queue);
+
+    if (found_nounce == 0) {
         printf("No solution found!\n");
         return 1;
     }
@@ -162,8 +246,8 @@ int main(int argc, char *argv[]) {
     char solution_hash[41];
     sha1tostring(solution_hash, digest);
 
-    printf("Solution found by thread %d:\n", 0);
-    printf("Nonce: %lu\n", nonce);
+    printf("Solution found by thread %ld:\n", found_rank);
+    printf("Nonce: %lu\n", found_nounce);
     printf(" Hash: %s\n", solution_hash);
 
     double total_time = end_time - start_time;
