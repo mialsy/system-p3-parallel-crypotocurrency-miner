@@ -48,8 +48,9 @@ pthread_cond_t condp = PTHREAD_COND_INITIALIZER;
 
 struct queue *task_queue;
 uint64_t found_nounce = 0;
+uint64_t poll_times = 0;
 long found_rank = -1;
-uint8_t digest[SHA1_HASH_SIZE];
+uint8_t found_digest[SHA1_HASH_SIZE];
 char *bitcoin_block_data = "";
 uint32_t difficulty_mask = 0;
 
@@ -97,6 +98,8 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
 
         /* Check to see if we've found a solution to our block */
         if ((hash_front & difficulty_mask) == hash_front) {
+            LOG("nounce %ld\n", nonce);
+            print_binary32(hash_front);
             return nonce;
         }
     }
@@ -112,7 +115,7 @@ void *worker_thread(void *ptr)
     while (true)
     {
         pthread_mutex_lock(&mutex);
-        if (found_nounce != 0) {
+        if (found_nounce != 0 || poll_times >= UINT64_MAX / RANGE) {
             pthread_mutex_unlock(&mutex);
             pthread_cond_signal(&condp);
             break;
@@ -123,7 +126,7 @@ void *worker_thread(void *ptr)
             pthread_cond_wait(&condc, &mutex);
         }
         start = queue_poll(task_queue);
-
+        poll_times++;
         pthread_mutex_unlock(&mutex);
 
         /* Mine the block. */
@@ -132,6 +135,7 @@ void *worker_thread(void *ptr)
 
         LOG("mine range [%ld-%ld]\n", start, end);
 
+        uint8_t digest[SHA1_HASH_SIZE];
         uint64_t nonce = mine(
             bitcoin_block_data,
             difficulty_mask,
@@ -146,6 +150,7 @@ void *worker_thread(void *ptr)
             if (found_nounce == 0) {
                 found_nounce = nonce;
                 found_rank = rank;
+                memcpy(found_digest, digest, SHA1_HASH_SIZE);
             } 
             pthread_mutex_unlock(&mutex);
             pthread_cond_signal(&condp);
@@ -246,7 +251,7 @@ int main(int argc, char *argv[]) {
 
     /* When printed in hex, a SHA-1 checksum will be 40 characters. */
     char solution_hash[41];
-    sha1tostring(solution_hash, digest);
+    sha1tostring(solution_hash, found_digest);
 
     printf("Solution found by thread %ld:\n", found_rank);
     printf("Nonce: %lu\n", found_nounce);
