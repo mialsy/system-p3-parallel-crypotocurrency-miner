@@ -1,3 +1,7 @@
+/**
+ * @file queue.c
+ *
+ **/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -83,7 +87,7 @@ void queue_print(struct queue *q)
     struct qnode *current = q->head;
     while (current != NULL)
     {
-        printf("%ld -> ", current->data);
+        printf("%lu -> ", current->data);
         current = current->next;
     }
     printf("NULL\n");

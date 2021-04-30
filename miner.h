@@ -1,5 +1,12 @@
+
+/**
+ * @file mine.h
+ *
+ **/
+
 #ifndef _MINER_H_
 #define _MINER_H_
+#include <stdint.h>
 
 /**
  * Retrieves the current wall clock time, in seconds.

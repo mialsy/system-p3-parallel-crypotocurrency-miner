@@ -38,7 +38,7 @@
 #include "queue.h"
 #include "sha1.h"
 
-#define RANGE 10000
+#define RANGE 100
 
 unsigned long long total_inversions;
 
@@ -48,6 +48,7 @@ pthread_cond_t condp = PTHREAD_COND_INITIALIZER;
 
 struct queue *task_queue;
 uint64_t found_nounce = 0;
+uint64_t offer_times = 0;
 uint64_t poll_times = 0;
 long found_rank = -1;
 uint8_t found_digest[SHA1_HASH_SIZE];
@@ -119,23 +120,22 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
 void *worker_thread(void *ptr)
 {
     long rank = (long)ptr;
-    uint64_t start = 0;
 
     while (true)
     {
         pthread_mutex_lock(&mutex);
-        
 
         while (queue_size(task_queue) == 0)
         {
-            if (found_nounce != 0 || poll_times >= UINT64_MAX / RANGE) {
-                // pthread_cond_signal(&condp);
+            if (found_nounce != 0 || offer_times < poll_times) {
+                pthread_cond_signal(&condp);
                 pthread_mutex_unlock(&mutex);
                 return NULL;
             }
             pthread_cond_wait(&condc, &mutex);
         }
-        start = queue_poll(task_queue);
+
+        uint64_t start = queue_poll(task_queue);
         poll_times++;
         pthread_cond_signal(&condp);
         pthread_mutex_unlock(&mutex);
@@ -163,6 +163,7 @@ void *worker_thread(void *ptr)
                 found_rank = rank;
                 memcpy(found_digest, digest, SHA1_HASH_SIZE);
             } 
+            pthread_cond_signal(&condp);
             pthread_cond_broadcast(&condc);
             pthread_mutex_unlock(&mutex);
             break;
@@ -184,10 +185,18 @@ int main(int argc, char *argv[]) {
 
     // TODO refactor to strcol
     int num_threads = atoi(argv[1]); 
+    if (num_threads <= 0) {
+        printf("Cannot process with less than 1 threads, exiting.\n");
+        return EXIT_FAILURE;
+    }
     printf("Number of threads: %d\n", num_threads);
 
     // TODO refactor to strcol
     int desired_difficulty = atoi(argv[2]);
+    if (desired_difficulty > 32) {
+        printf("Invalid difficulty: %d.\n", desired_difficulty);
+        return EXIT_FAILURE;
+    }
     LOG("difficulty: %d\n", desired_difficulty);
 
     // set difficulty
@@ -212,6 +221,7 @@ int main(int argc, char *argv[]) {
 
     double start_time = get_time();
 
+    /* creating worker threads */
     pthread_t *workers = malloc(num_threads * sizeof(pthread_t));
     for (int i = 0; i < num_threads; i++) {
             pthread_create(
@@ -221,10 +231,10 @@ int main(int argc, char *argv[]) {
             ((void *) (unsigned long) i));
     }
 
-    /* create worker threads */    
     uint64_t i;
     for (i = 1; i < UINT64_MAX; i += RANGE) {
         pthread_mutex_lock(&mutex);
+        offer_times++;
         while (queue_size(task_queue) == num_threads && found_nounce == 0)
         {
             pthread_cond_wait(&condp, &mutex);
@@ -232,7 +242,7 @@ int main(int argc, char *argv[]) {
 
         if (found_nounce != 0)
         {
-            printf("%ld found %ld\n", found_rank, found_nounce);
+            printf("%ld found %lu\n", found_rank, found_nounce);
             pthread_mutex_unlock(&mutex);
             break;
         }
@@ -244,10 +254,10 @@ int main(int argc, char *argv[]) {
         pthread_mutex_unlock(&mutex);
     }
 
-    for (int i = 0; i < num_threads; i++)
+    for (int idx = 0; idx < num_threads; idx++)
     {
         LOGP("join\n");
-        pthread_join(workers[i], NULL);
+        pthread_join(workers[idx], NULL);
     }
 
     free(workers);

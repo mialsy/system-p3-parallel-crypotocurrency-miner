@@ -1,3 +1,8 @@
+/**
+ * @file sha1.c
+ *
+ **/
+
 #include <stdio.h>
 
 #include "sha1.h"
