@@ -124,18 +124,20 @@ void *worker_thread(void *ptr)
     while (true)
     {
         pthread_mutex_lock(&mutex);
-        if (found_nounce != 0 || poll_times >= UINT64_MAX / RANGE) {
-            pthread_mutex_unlock(&mutex);
-            pthread_cond_signal(&condp);
-            break;
-        }
+        
 
         while (queue_size(task_queue) == 0)
         {
+            if (found_nounce != 0 || poll_times >= UINT64_MAX / RANGE) {
+                // pthread_cond_signal(&condp);
+                pthread_mutex_unlock(&mutex);
+                return NULL;
+            }
             pthread_cond_wait(&condc, &mutex);
         }
         start = queue_poll(task_queue);
         poll_times++;
+        pthread_cond_signal(&condp);
         pthread_mutex_unlock(&mutex);
 
         /* Mine the block. */
@@ -161,15 +163,13 @@ void *worker_thread(void *ptr)
                 found_rank = rank;
                 memcpy(found_digest, digest, SHA1_HASH_SIZE);
             } 
-            pthread_mutex_unlock(&mutex);
-            pthread_cond_signal(&condp);
             pthread_cond_broadcast(&condc);
+            pthread_mutex_unlock(&mutex);
             break;
         }
 
         /* Wake up the producer */
         pthread_mutex_unlock(&mutex);
-        pthread_cond_signal(&condp);
     }
     return 0;
 }
@@ -206,10 +206,11 @@ int main(int argc, char *argv[]) {
 
     printf("\n----------- Starting up miner threads!  -----------\n\n");
 
-    double start_time = get_time();
-
     /* init task queue */
     task_queue = queue_init();
+    
+
+    double start_time = get_time();
 
     pthread_t *workers = malloc(num_threads * sizeof(pthread_t));
     for (int i = 0; i < num_threads; i++) {
@@ -243,14 +244,14 @@ int main(int argc, char *argv[]) {
         pthread_mutex_unlock(&mutex);
     }
 
-    double end_time = get_time();
-
     for (int i = 0; i < num_threads; i++)
     {
-        // LOGP("join\n");
+        LOGP("join\n");
         pthread_join(workers[i], NULL);
     }
+
     free(workers);
+    double end_time = get_time();
     // LOGP("end join\n");
     queue_destory(task_queue);
 
