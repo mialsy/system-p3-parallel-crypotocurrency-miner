@@ -1,0 +1,308 @@
+Number of threads: 1
+  Difficulty Mask: 00001111111111111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 6
+Solution found by thread 0:
+Nonce: 6
+ Hash: 0B198B383CA0BA904238CAA9ADA8D78507EEEBA3
+6 hashes in 0.00s (34904.06 hashes/sec)
+Number of threads: 2
+  Difficulty Mask: 00001111111111111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 6
+Solution found by thread 0:
+Nonce: 6
+ Hash: 0B198B383CA0BA904238CAA9ADA8D78507EEEBA3
+38 hashes in 0.00s (91337.28 hashes/sec)
+Number of threads: 4
+  Difficulty Mask: 00001111111111111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+2 found 20008
+Solution found by thread 2:
+Nonce: 20008
+ Hash: 0537AD594FA8F1CEDB5509CFA09180E82A5E28AC
+46 hashes in 0.00s (141139.71 hashes/sec)
+Number of threads: 8
+  Difficulty Mask: 00001111111111111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 20008
+Solution found by thread 0:
+Nonce: 20008
+ Hash: 0537AD594FA8F1CEDB5509CFA09180E82A5E28AC
+68 hashes in 0.00s (160321.91 hashes/sec)
+Number of threads: 1
+  Difficulty Mask: 00000000111111111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 17
+Solution found by thread 0:
+Nonce: 17
+ Hash: 009A403F7B61DDF8A91943EF70F59AD12643744C
+17 hashes in 0.00s (111064.12 hashes/sec)
+Number of threads: 2
+  Difficulty Mask: 00000000111111111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+1 found 17
+Solution found by thread 1:
+Nonce: 17
+ Hash: 009A403F7B61DDF8A91943EF70F59AD12643744C
+703 hashes in 0.00s (3346873.68 hashes/sec)
+Number of threads: 4
+  Difficulty Mask: 00000000111111111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+3 found 17
+Solution found by thread 3:
+Nonce: 17
+ Hash: 009A403F7B61DDF8A91943EF70F59AD12643744C
+842 hashes in 0.00s (2153417.05 hashes/sec)
+Number of threads: 8
+  Difficulty Mask: 00000000111111111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 17
+Solution found by thread 0:
+Nonce: 17
+ Hash: 009A403F7B61DDF8A91943EF70F59AD12643744C
+1555 hashes in 0.00s (2732359.75 hashes/sec)
+Number of threads: 1
+  Difficulty Mask: 00000000000011111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 15876
+Solution found by thread 0:
+Nonce: 15876
+ Hash: 0009BAC6C8AAE50C667BAFA98E8F571051F9CD5B
+15875 hashes in 0.03s (571536.52 hashes/sec)
+Number of threads: 2
+  Difficulty Mask: 00000000000011111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+1 found 15876
+Solution found by thread 1:
+Nonce: 15876
+ Hash: 0009BAC6C8AAE50C667BAFA98E8F571051F9CD5B
+15875 hashes in 0.01s (1580867.92 hashes/sec)
+Number of threads: 4
+  Difficulty Mask: 00000000000011111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+2 found 15876
+Solution found by thread 2:
+Nonce: 15876
+ Hash: 0009BAC6C8AAE50C667BAFA98E8F571051F9CD5B
+30072 hashes in 0.01s (2969817.28 hashes/sec)
+Number of threads: 8
+  Difficulty Mask: 00000000000011111111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+1 found 51405
+Solution found by thread 1:
+Nonce: 51405
+ Hash: 000A09660AFB3B22971DB879F2C39CD8946A095D
+36527 hashes in 0.00s (8582451.53 hashes/sec)
+Number of threads: 1
+  Difficulty Mask: 00000000000000001111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 218384
+Solution found by thread 0:
+Nonce: 218384
+ Hash: 0000F7B3EF2F063231E323A2190E3A04F69BD7AA
+218363 hashes in 0.37s (594725.48 hashes/sec)
+Number of threads: 2
+  Difficulty Mask: 00000000000000001111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+1 found 218384
+Solution found by thread 1:
+Nonce: 218384
+ Hash: 0000F7B3EF2F063231E323A2190E3A04F69BD7AA
+218363 hashes in 0.18s (1195554.47 hashes/sec)
+Number of threads: 4
+  Difficulty Mask: 00000000000000001111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+3 found 218384
+Solution found by thread 3:
+Nonce: 218384
+ Hash: 0000F7B3EF2F063231E323A2190E3A04F69BD7AA
+238361 hashes in 0.10s (2410874.94 hashes/sec)
+Number of threads: 8
+  Difficulty Mask: 00000000000000001111111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 218384
+Solution found by thread 0:
+Nonce: 218384
+ Hash: 0000F7B3EF2F063231E323A2190E3A04F69BD7AA
+238361 hashes in 0.05s (4828048.54 hashes/sec)
+Number of threads: 1
+  Difficulty Mask: 00000000000000000000111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 2286099
+Solution found by thread 0:
+Nonce: 2286099
+ Hash: 00000E017F9B6BA5A5375235D18DFDFB82E1F95B
+2285871 hashes in 3.87s (590871.96 hashes/sec)
+Number of threads: 2
+  Difficulty Mask: 00000000000000000000111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+1 found 2286099
+Solution found by thread 1:
+Nonce: 2286099
+ Hash: 00000E017F9B6BA5A5375235D18DFDFB82E1F95B
+2295870 hashes in 1.93s (1187889.69 hashes/sec)
+Number of threads: 4
+  Difficulty Mask: 00000000000000000000111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 2286099
+Solution found by thread 0:
+Nonce: 2286099
+ Hash: 00000E017F9B6BA5A5375235D18DFDFB82E1F95B
+2315868 hashes in 0.97s (2389793.53 hashes/sec)
+Number of threads: 8
+  Difficulty Mask: 00000000000000000000111111111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+2 found 2286099
+Solution found by thread 2:
+Nonce: 2286099
+ Hash: 00000E017F9B6BA5A5375235D18DFDFB82E1F95B
+2305869 hashes in 0.49s (4740499.81 hashes/sec)
+Number of threads: 1
+  Difficulty Mask: 00000000000000000000000011111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 30768783
+Solution found by thread 0:
+Nonce: 30768783
+ Hash: 00000057B7F436EE48CF024E942AE475C3A2B6AC
+30765707 hashes in 52.65s (584347.00 hashes/sec)
+Number of threads: 2
+  Difficulty Mask: 00000000000000000000000011111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+1 found 30768783
+Solution found by thread 1:
+Nonce: 30768783
+ Hash: 00000057B7F436EE48CF024E942AE475C3A2B6AC
+30775706 hashes in 26.71s (1152079.42 hashes/sec)
+Number of threads: 4
+  Difficulty Mask: 00000000000000000000000011111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+1 found 30768783
+Solution found by thread 1:
+Nonce: 30768783
+ Hash: 00000057B7F436EE48CF024E942AE475C3A2B6AC
+30785705 hashes in 12.95s (2377395.31 hashes/sec)
+Number of threads: 8
+  Difficulty Mask: 00000000000000000000000011111111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+4 found 30768783
+Solution found by thread 4:
+Nonce: 30768783
+ Hash: 00000057B7F436EE48CF024E942AE475C3A2B6AC
+30835700 hashes in 6.54s (4718463.25 hashes/sec)
+Number of threads: 1
+  Difficulty Mask: 00000000000000000000000000001111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 330771767
+Solution found by thread 0:
+Nonce: 330771767
+ Hash: 0000000658FD581D42FEB890F09C8722AB1FA754
+330738690 hashes in 564.82s (585569.48 hashes/sec)
+Number of threads: 2
+  Difficulty Mask: 00000000000000000000000000001111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+0 found 330771767
+Solution found by thread 0:
+Nonce: 330771767
+ Hash: 0000000658FD581D42FEB890F09C8722AB1FA754
+330738690 hashes in 279.78s (1182148.67 hashes/sec)
+Number of threads: 4
+  Difficulty Mask: 00000000000000000000000000001111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+2 found 330771767
+Solution found by thread 2:
+Nonce: 330771767
+ Hash: 0000000658FD581D42FEB890F09C8722AB1FA754
+330748689 hashes in 143.00s (2312905.64 hashes/sec)
+Number of threads: 8
+  Difficulty Mask: 00000000000000000000000000001111
+       Block data: [skittle]
+
+----------- Starting up miner threads!  -----------
+
+2 found 330771767
+Solution found by thread 2:
+Nonce: 330771767
+ Hash: 0000000658FD581D42FEB890F09C8722AB1FA754
+330768687 hashes in 71.79s (4607154.21 hashes/sec)

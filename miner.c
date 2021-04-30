@@ -75,7 +75,7 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
         uint8_t digest[SHA1_HASH_SIZE]) {
 
     unsigned long long inversions = 0;
-    LOG("input: %s", data_block);
+    // LOG("input: %s", data_block);
 
     for (uint64_t nonce = nonce_start; nonce < nonce_end; nonce++) {
         /* A 64-bit unsigned number can be up to 20 characters  when printed: */
@@ -101,8 +101,8 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
 
         /* Check to see if we've found a solution to our block */
         if ((hash_front & difficulty_mask) == hash_front) {
-            LOG("nounce %ld\n", nonce);
-            print_binary32(hash_front);
+            // LOG("nounce %ld\n", nonce);
+            // print_binary32(hash_front);
             pthread_mutex_lock(&mutex);
             total_inversions += inversions;
             pthread_mutex_unlock(&mutex);
@@ -142,7 +142,7 @@ void *worker_thread(void *ptr)
         uint64_t end = start + RANGE - 1;
         end = end < start ? UINT64_MAX: end;
 
-        LOG("mine range [%ld-%ld]\n", start, end);
+        // LOG("mine range [%ld-%ld]\n", start, end);
 
         uint8_t digest[SHA1_HASH_SIZE];
         uint64_t nonce = mine(
@@ -151,7 +151,7 @@ void *worker_thread(void *ptr)
             start, end,
             digest);
 
-        LOG("nounce %ld\n", nonce);
+        // LOG("nounce %ld\n", nonce);
 
         pthread_mutex_lock(&mutex);
         if (nonce != 0)
@@ -175,6 +175,7 @@ void *worker_thread(void *ptr)
 }
 
 int main(int argc, char *argv[]) {
+    LOGP("starting!");
 
     if (argc != 4) {
         printf("Usage: %s threads difficulty 'block data (string)'\n", argv[0]);
@@ -235,7 +236,7 @@ int main(int argc, char *argv[]) {
             break;
         }
         /* Time to produce a new value: */
-        LOG("produce %ld\n", i);
+        // LOG("produce %ld\n", i);
         queue_offer(task_queue, i);
         /* Wake up consumer */
         pthread_cond_signal(&condc);
@@ -246,11 +247,11 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < num_threads; i++)
     {
-        LOGP("join\n");
+        // LOGP("join\n");
         pthread_join(workers[i], NULL);
     }
     free(workers);
-    LOGP("end join\n");
+    // LOGP("end join\n");
     queue_destory(task_queue);
 
     if (found_nounce == 0) {
