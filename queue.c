@@ -1,7 +1,7 @@
 /**
  * @file queue.c
  * 
- * @brief a linked list implmentation of queue
+ * @brief a linkedlist implmentation of queue
  * 
  * Queue is a first in first out structure.
  * In this implemenetaion, only uint64_t data can be offered to the queue,
