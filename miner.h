@@ -1,7 +1,8 @@
 
 /**
- * @file mine.h
+ * @file miner.h
  *
+ * @brief header file for miner.c
  **/
 
 #ifndef _MINER_H_

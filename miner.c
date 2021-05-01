@@ -1,7 +1,7 @@
 /**
  * @file mine.c
  *
- * Parallelizes the hash inversion technique used by cryptocurrencies such as
+ * @brief Parallelizes the hash inversion technique used by cryptocurrencies such as
  * bitcoin.
  *
  * Input:    Number of threads, block difficulty, and block contents (string)
@@ -38,22 +38,23 @@
 #include "queue.h"
 #include "sha1.h"
 
-#define RANGE 100
+#define RANGE 100 /**< the range of each work thread to work on*/
 
-unsigned long long total_inversions;
+unsigned long long total_inversions; /**< total inversion count*/
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t condc = PTHREAD_COND_INITIALIZER;
-pthread_cond_t condp = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER; /**< the shared mutex*/
+pthread_cond_t condc = PTHREAD_COND_INITIALIZER; /**< the conditional varibale to signal to consumer threads*/
+pthread_cond_t condp = PTHREAD_COND_INITIALIZER; /**< the conditional varibale to signal to producer(main) thread*/
 
-struct queue *task_queue;
-uint64_t found_nounce = 0;
-uint64_t offer_times = 0;
-uint64_t poll_times = 0;
-long found_rank = -1;
-uint8_t found_digest[SHA1_HASH_SIZE];
-char *bitcoin_block_data = "";
-uint32_t difficulty_mask = 0;
+uint64_t found_nonce = 0; /**< the found nonce, will be non-zero after found*/
+long found_rank = -1; /**< the rank of thread which found the nonce, will be non-negative after found*/
+uint8_t found_digest[SHA1_HASH_SIZE];  /**< the digest for the found nonce*/
+char *bitcoin_block_data = ""; /**< the input block data*/
+uint32_t difficulty_mask = 0; /**< the difficulty mask calculate by the input difficulty level*/
+
+struct queue *task_queue; /**< the task queue*/
+uint64_t offer_times = 0; /**< the total times of task has been offered in the queue*/
+uint64_t poll_times = 0;  /**< the total times of task has been offered in the queue*/
 
 double get_time()
 {
@@ -71,6 +72,16 @@ void print_binary32(uint32_t num) {
     puts("");
 }
 
+/**
+ * @brief The mine function
+ * 
+ * @param data_block the data block is the prefix of word need to mine, provided in user input
+ * @param difficulty_mask the difficulty mask calculated based on difficulty level input
+ * @param nonce_start the start of nonce range to be checked by mine function, inclusive
+ * @param nonce_end the end of nonce range to be checked by mine function, inclusive
+ * @param digest the digest of the sha1 hash
+ * @return uint64_t the found nonce, or zero on not finding a nonce matching the difficulty mask
+ */
 uint64_t mine(char *data_block, uint32_t difficulty_mask,
         uint64_t nonce_start, uint64_t nonce_end,
         uint8_t digest[SHA1_HASH_SIZE]) {
@@ -117,6 +128,12 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
     return 0;
 }
 
+/**
+ * @brief thread routine for the worker
+ * 
+ * @param ptr void pointer input which is the rank of the thread
+ * @return void* NULL
+ */
 void *worker_thread(void *ptr)
 {
     long rank = (long)ptr;
@@ -127,7 +144,7 @@ void *worker_thread(void *ptr)
 
         while (queue_size(task_queue) == 0)
         {
-            if (found_nounce != 0 || offer_times < poll_times) {
+            if (found_nonce != 0 || offer_times < poll_times) {
                 pthread_cond_signal(&condp);
                 pthread_mutex_unlock(&mutex);
                 return NULL;
@@ -158,8 +175,8 @@ void *worker_thread(void *ptr)
         pthread_mutex_lock(&mutex);
         if (nonce != 0)
         {
-            if (found_nounce == 0) {
-                found_nounce = nonce;
+            if (found_nonce == 0) {
+                found_nonce = nonce;
                 found_rank = rank;
                 memcpy(found_digest, digest, SHA1_HASH_SIZE);
             } 
@@ -172,12 +189,18 @@ void *worker_thread(void *ptr)
         /* Wake up the producer */
         pthread_mutex_unlock(&mutex);
     }
-    return 0;
+    return NULL;
 }
 
+/**
+ * @brief main function for miner.c file
+ * 
+ * @param argc arg count
+ * @param argv args
+ * @return int zero on success, non-zero on failure
+ */
 int main(int argc, char *argv[]) {
-    LOGP("starting!");
-
+    /* process input argument */
     if (argc != 4) {
         printf("Usage: %s threads difficulty 'block data (string)'\n", argv[0]);
         return EXIT_FAILURE;
@@ -186,6 +209,7 @@ int main(int argc, char *argv[]) {
     // TODO refactor to strcol
     int num_threads = atoi(argv[1]); 
     if (num_threads <= 0) {
+        // handle invalid input thread count
         printf("Cannot process with less than 1 threads, exiting.\n");
         return EXIT_FAILURE;
     }
@@ -193,13 +217,14 @@ int main(int argc, char *argv[]) {
 
     // TODO refactor to strcol
     int desired_difficulty = atoi(argv[2]);
-    if (desired_difficulty > 32) {
+    if (desired_difficulty < 0 || desired_difficulty > 32) {
+        // handle invalid input difficulty level
         printf("Invalid difficulty: %d.\n", desired_difficulty);
         return EXIT_FAILURE;
     }
     LOG("difficulty: %d\n", desired_difficulty);
 
-    // set difficulty
+    /* set difficulty */
     for (int i = 0; i < 32 - desired_difficulty; i++) {
         difficulty_mask = difficulty_mask | 1 << i;
     }
@@ -214,12 +239,11 @@ int main(int argc, char *argv[]) {
     printf("       Block data: [%s]\n", bitcoin_block_data);
 
     printf("\n----------- Starting up miner threads!  -----------\n\n");
+    
+    double start_time = get_time();
 
     /* init task queue */
     task_queue = queue_init();
-    
-
-    double start_time = get_time();
 
     /* creating worker threads */
     pthread_t *workers = malloc(num_threads * sizeof(pthread_t));
@@ -231,23 +255,22 @@ int main(int argc, char *argv[]) {
             ((void *) (unsigned long) i));
     }
 
-    uint64_t i;
-    for (i = 1; i < UINT64_MAX; i += RANGE) {
+    /* produce tasks */
+    for (uint64_t i = 1; i < UINT64_MAX; i += RANGE) {
         pthread_mutex_lock(&mutex);
         offer_times++;
-        while (queue_size(task_queue) == num_threads && found_nounce == 0)
+        while (queue_size(task_queue) == num_threads && found_nonce == 0)
         {
             pthread_cond_wait(&condp, &mutex);
         }
 
-        if (found_nounce != 0)
+        if (found_nonce != 0)
         {
-            printf("%ld found %lu\n", found_rank, found_nounce);
+            LOG("%ld found %lu\n", found_rank, found_nonce);
             pthread_mutex_unlock(&mutex);
             break;
         }
-        /* Time to produce a new value: */
-        // LOG("produce %ld\n", i);
+        /* Produce a new working range start */
         queue_offer(task_queue, i);
         /* Wake up consumer */
         pthread_cond_signal(&condc);
@@ -256,18 +279,19 @@ int main(int argc, char *argv[]) {
 
     for (int idx = 0; idx < num_threads; idx++)
     {
-        LOGP("join\n");
         pthread_join(workers[idx], NULL);
     }
 
     free(workers);
-    double end_time = get_time();
-    // LOGP("end join\n");
     queue_destory(task_queue);
 
-    if (found_nounce == 0) {
+    /* end timing */
+    double end_time = get_time();
+
+    /* if no nonce are found, return exit failure to indicate mining failed */
+    if (found_nonce == 0) {
         printf("No solution found!\n");
-        return 1;
+        return EXIT_FAILURE;
     }
 
     /* When printed in hex, a SHA-1 checksum will be 40 characters. */
@@ -275,12 +299,12 @@ int main(int argc, char *argv[]) {
     sha1tostring(solution_hash, found_digest);
 
     printf("Solution found by thread %ld:\n", found_rank);
-    printf("Nonce: %lu\n", found_nounce);
+    printf("Nonce: %lu\n", found_nonce);
     printf(" Hash: %s\n", solution_hash);
 
     double total_time = end_time - start_time;
     printf("%llu hashes in %.2fs (%.2f hashes/sec)\n",
             total_inversions, total_time, total_inversions / total_time);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
