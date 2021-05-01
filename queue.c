@@ -1,23 +1,37 @@
 /**
  * @file queue.c
+ * 
+ * @brief a linked list implmentation of queue
+ * 
+ * Queue is a first in first out structure.
+ * In this implemenetaion, only uint64_t data can be offered to the queue,
+ * the data is offered to the tail every time,
+ * and can be retrived from the head of the linked list.
+ * 
+ * Note that as this queue stores the starting nonce of the mining range,
+ * all data is supposed to be positive uint64_t,
+ * thus zero value would be returned to indicate polling failure. 
  *
  **/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
 #include "logger.h"
 
+/**
+ * @brief linked list node for the queue
+ * 
+ */
 struct qnode
 {
-    uint64_t data;
-    struct qnode *next;
-};
+    uint64_t data; /**< the data stored in the queue */
+    struct qnode *next; /**< the next node in the queue */
+}; 
 
 struct queue
 {
-    struct qnode *head, *tail;
-    size_t size;
+    struct qnode *head, *tail; /**< the head and tail nodes of the queue */
+    size_t size; /**< the size of the queue */
 };
 
 int queue_size(struct queue *q) {
@@ -38,7 +52,7 @@ int queue_offer(struct queue *q, uint64_t data)
     struct qnode *new_node = malloc(sizeof(struct qnode));
     if (new_node == NULL)
     {
-
+        // malloc failed
         free(new_node);
         return -1;
     }
@@ -47,6 +61,7 @@ int queue_offer(struct queue *q, uint64_t data)
 
     if (q->head == NULL)
     {
+        // handle cases that queue is empty
         q->head = new_node;
         q->tail = new_node;
         q->size = 1;
@@ -64,7 +79,8 @@ uint64_t queue_poll(struct queue *q)
 {
     if (q->size == 0)
     {
-        return -1;
+        // cannot poll, return zero as data should be positive 
+        return 0;
     }
 
     struct qnode *old_head = q->head;
@@ -100,28 +116,3 @@ void queue_destory(struct queue *q)
     }
     free(q);
 }
-
-
-
-// void main()
-// {
-//     struct queue* q1 = queue_init();
-
-//     queue_offer(q1, 1);
-//     queue_offer(q1, 2);
-//     queue_offer(q1, 3);
-//     queue_offer(q1, 4);
-//     queue_offer(q1, 5);
-
-//     int count = queue_size(q1);
-//     printf("size: %d\n", count);
-
-//     while (queue_size(q1) > 0)
-//     {
-//         int num = queue_poll(q1);
-//         printf("poll: %d\n", num);
-//     }
-    
-//     queue_print(q1);
-//     queue_destory(q1);
-// }
