@@ -206,22 +206,23 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    // TODO refactor to strcol
-    int num_threads = atoi(argv[1]); 
-    if (num_threads <= 0) {
+    char *endptr;
+    long lnum_threads = strtol(argv[1], &endptr, 10);
+    if (lnum_threads <= 0 ||lnum_threads > INT_MAX || endptr == argv[1]) {
         // handle invalid input thread count
-        printf("Cannot process with less than 1 threads, exiting.\n");
+        printf("Invalid thread number, exiting.\n");
         return EXIT_FAILURE;
     }
+    int num_threads = (int)lnum_threads;
     printf("Number of threads: %d\n", num_threads);
 
-    // TODO refactor to strcol
-    int desired_difficulty = atoi(argv[2]);
-    if (desired_difficulty < 0 || desired_difficulty > 32) {
+    long ldifficulty = strtol(argv[2], &endptr, 10);
+    if (ldifficulty < 0 || ldifficulty > 32 || endptr == argv[2]) {
         // handle invalid input difficulty level
-        printf("Invalid difficulty: %d.\n", desired_difficulty);
+        printf("Invalid difficulty, exiting\n");
         return EXIT_FAILURE;
     }
+    int desired_difficulty = (int) ldifficulty;
     LOG("difficulty: %d\n", desired_difficulty);
 
     /* set difficulty */
