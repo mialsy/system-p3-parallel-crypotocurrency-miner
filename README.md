@@ -14,9 +14,9 @@ For instance, ```gumball4``` with sha1sum of ```3BF9AB79960ECA1B4AAEE7BDBF9884A2
 
 Now we have defined the value of our crypotocurrency, we need to actually **mine** the coin so that we can talk about making money!
 
-<div display = "flex">
+<p align="ceter" style="background-color:black;">
 <img src="http://49.media.tumblr.com/tumblr_lbh1lw2HId1qa1xnko1_500.gif" alt="dwarfs mining in Snow White and The Seven Dwarfs" width="300" margin="auto">
-</div>
+</p]>
 
 ### What is ```miner```? 
 
