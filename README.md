@@ -6,11 +6,17 @@
 
 ## About the project
 
-*When I was young I thought that money was the most important thing in life; now that I am old I know that it is.* as said by my favorite writer Oscar Wilde. To show our respect to money, here we built our own cryptocurrency which defines the value of the coin by certain pattern of the zeros in the sha1sum result of the input string. To be specific, our coins are basically strings with a trailing nonce, which has sha1sum of the defined leading zero counts. The more zeros there are, the more value we assigned to the coin. For instance, ```gumball4``` with sha1sum of ```3BF9AB79960ECA1B4AAEE7BDBF9884A20FE3E539``` is considered having lower value than ```gumabll587``` which has sha1sum of ```00DF1955AF4D92D0B9DF0FF7E27A23A3D7429FF9```.
+*When I was young I thought that money was the most important thing in life; now that I am old I know that it is.* as said by my favorite writer Oscar Wilde. 
+
+To show our respect to money, here we built our own cryptocurrency which defines the value of the coin by certain pattern of the zeros in the sha1sum result of the input string. To be specific, our coins are basically strings with a trailing nonce, which has sha1sum of the defined leading zero counts. The more zeros there are, the more value we assigned to the coin. 
+
+For instance, ```gumball4``` with sha1sum of ```3BF9AB79960ECA1B4AAEE7BDBF9884A20FE3E539``` is considered having lower value than ```gumabll587``` which has sha1sum of ```00DF1955AF4D92D0B9DF0FF7E27A23A3D7429FF9```.
 
 Now we have defined the value of our crypotocurrency, we need to actually **mine** the coin so that we can talk about making money!
 
-<img src="http://49.media.tumblr.com/tumblr_lbh1lw2HId1qa1xnko1_500.gif" alt="dwarfs mining in Snow White and The Seven Dwarfs" width="300">
+<div display = "flex">
+<img src="http://49.media.tumblr.com/tumblr_lbh1lw2HId1qa1xnko1_500.gif" alt="dwarfs mining in Snow White and The Seven Dwarfs" width="300" margin="auto">
+</div>
 
 ### What is ```miner```? 
 
