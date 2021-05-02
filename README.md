@@ -2,13 +2,17 @@
 
 **Author**: [Chuxi Wang](https://www.instagram.com/_mialsy_/ "click here to see awesome kitties, helps me survive this project :)") 
 
-**Summmary**: 
+**Summmary**: This is the project 3 for CS 521 System programing. In this project, I modified the single-thread version of the crypttocurrency miner to parallel version, using the producer-consumer model. This ```miner``` program allow user to input customized thread number, difficulty level and data block to create their own personalized crytocurrency with desired efficiency (thread count).
 
 ## About the project
 
-This project 
+*When I was young I thought that money was the most important thing in life; now that I am old I know that it is.* as said by my favorite writer Oscar Wilde. To show our respect to money, here we built our own cryptocurrency which defines the value of the coin by certain pattern of the zeros in the sha1sum result of the input string. To be specific, our coins are basically strings with a trailing nonce, which has sha1sum of the defined leading zero counts. The more zeros there are, the more value we assigned to the coin. For instance, ```gumball4``` with sha1sum of ```3BF9AB79960ECA1B4AAEE7BDBF9884A20FE3E539``` is considered having lower value than ```gumabll587``` which has sha1sum of ```00DF1955AF4D92D0B9DF0FF7E27A23A3D7429FF9```.
 
-### What is ```crash```? 
+Now we have defined the value of our crypotocurrency, we need to actually **mine** the coin so that we can talk about making money!
+
+<img src="http://49.media.tumblr.com/tumblr_lbh1lw2HId1qa1xnko1_500.gif" alt="dwarfs mining in Snow White and The Seven Dwarfs" width="200">
+
+### What is ```miner```? 
 
 ```crash``` is our own version of the command line interface shell. It basically allows user to interact with the computers in the following ways:
 
@@ -22,6 +26,15 @@ This project
 The workflow of how ```crash``` works is as follow: 
 <img src="https://github.com/usf-cs521-sp21/P2-mialsy/blob/main/res/p2_main_function.jpg" alt="crash main function workflow" width="900">
 
+### Multi-thread parallel program and the producer consumer model
+
+A process is basically an instance of the running program. 
+
+In the ```crash``` program, we fork a child process to execute an external command. 
+
+The reason we need different process working on this is that we can do then have differnt handling of signal of the child process, and also allow our ```crash``` to run background jobs. Another reason is that by doing so, we would be able to set up enviroment of the execution of program in the child process, and would be able to redirect IO.
+
+
 ### The task queue and why do we need a queue? 
 
 To support the built-in history browsing and retriving, an history list based on circular list (clist) structure is included. 
@@ -30,14 +43,6 @@ The clist is essencially a list that gets override when a limit has been reached
 
 Here is a domenstration of how clist works:
 <img src="https://github.com/usf-cs521-sp21/P2-mialsy/blob/main/res/clist_demo.gif" alt="demo of the clist adding operation" width="700">
-
-### Multi-thread parallel program
-
-A process is basically an instance of the running program. 
-
-In the ```crash``` program, we fork a child process to execute an external command. 
-
-The reason we need different process working on this is that we can do then have differnt handling of signal of the child process, and also allow our ```crash``` to run background jobs. Another reason is that by doing so, we would be able to set up enviroment of the execution of program in the child process, and would be able to redirect IO.
 
 ## Program options
 
