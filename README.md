@@ -10,7 +10,7 @@
 
 Now we have defined the value of our crypotocurrency, we need to actually **mine** the coin so that we can talk about making money!
 
-<img src="http://49.media.tumblr.com/tumblr_lbh1lw2HId1qa1xnko1_500.gif" alt="dwarfs mining in Snow White and The Seven Dwarfs" width="200">
+<img src="http://49.media.tumblr.com/tumblr_lbh1lw2HId1qa1xnko1_500.gif" alt="dwarfs mining in Snow White and The Seven Dwarfs" width="300">
 
 ### What is ```miner```? 
 
