@@ -189,3 +189,5 @@ The following table is an exmaple output of the runner.
 
 And here is a plot showing the efficiency:
 <img src="https://github.com/usf-cs521-sp21/P3-mialsy/blob/main/images/Picture1.svg" alt="plot of time vs thread" width="600">
+
+From the plot we can see it is almost linear for log time vs log thread count, indicates most of the program is parallel.
