@@ -14,7 +14,7 @@ For instance, ```gumball4``` with sha1sum of ```3BF9AB79960ECA1B4AAEE7BDBF9884A2
 
 Now we have defined the value of our crypotocurrency, we need to actually **mine** the coin so that we can talk about making money!
 
-<p align="center" style="background-color:black;">
+<p align="center">
 <img src="http://49.media.tumblr.com/tumblr_lbh1lw2HId1qa1xnko1_500.gif" alt="dwarfs mining in Snow White and The Seven Dwarfs" width="450">
 </p>
 
@@ -187,4 +187,7 @@ The following table is an exmaple output of the runner.
 | 4 | 28 | 149.91 |2184460.46
 | 8 | 28 | 78.71 |4160143.33
 
-And here is a plot showing the efficiency
+And here is a plot showing the efficiency:
+<p align="center">
+<img src="https://github.com/usf-cs521-sp21/P3-mialsy/blob/main/images/Picture1.svg" alt="plot of time vs thread" width="600">
+</p>
