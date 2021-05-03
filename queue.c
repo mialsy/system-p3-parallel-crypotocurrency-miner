@@ -8,6 +8,9 @@
  * the data is offered to the tail every time,
  * and can be retrived from the head of the linked list.
  * 
+ * This queue implementation provide O(1) time offering, polling, 
+ * and retriving the size of the queue. 
+ * 
  * Note that as this queue stores the starting nonce of the mining range,
  * all data is supposed to be positive uint64_t,
  * thus zero value would be returned to indicate polling failure. 
