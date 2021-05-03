@@ -188,6 +188,4 @@ The following table is an exmaple output of the runner.
 | 8 | 28 | 78.71 |4160143.33
 
 And here is a plot showing the efficiency:
-<p align="center">
 <img src="https://github.com/usf-cs521-sp21/P3-mialsy/blob/main/images/Picture1.svg" alt="plot of time vs thread" width="600">
-</p>
