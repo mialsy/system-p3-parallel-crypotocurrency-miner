@@ -113,8 +113,6 @@ uint64_t mine(char *data_block, uint32_t difficulty_mask,
 
         /* Check to see if we've found a solution to our block */
         if ((hash_front & difficulty_mask) == hash_front) {
-            // LOG("nounce %ld\n", nonce);
-            // print_binary32(hash_front);
             pthread_mutex_lock(&mutex);
             total_inversions += inversions;
             pthread_mutex_unlock(&mutex);
@@ -157,12 +155,13 @@ void *worker_thread(void *ptr)
         pthread_cond_signal(&condp);
         pthread_mutex_unlock(&mutex);
 
-        /* Mine the block. */
+        /* Calculate the end position. */
         uint64_t end = start + RANGE - 1;
+
+        /* handle overflow */
         end = end < start ? UINT64_MAX: end;
 
-        // LOG("mine range [%ld-%ld]\n", start, end);
-
+        /* Mine the block. */
         uint8_t digest[SHA1_HASH_SIZE];
         uint64_t nonce = mine(
             bitcoin_block_data,
@@ -170,23 +169,26 @@ void *worker_thread(void *ptr)
             start, end,
             digest);
 
-        // LOG("nounce %ld\n", nonce);
-
         pthread_mutex_lock(&mutex);
         if (nonce != 0)
         {
+            /* found the nonce */
             if (found_nonce == 0) {
+                /* copy results to global varibles */
                 found_nonce = nonce;
                 found_rank = rank;
                 memcpy(found_digest, digest, SHA1_HASH_SIZE);
             } 
+            
+            /* Wake up the producer */
             pthread_cond_signal(&condp);
+
+            /* broadcast to wake up workers */
             pthread_cond_broadcast(&condc);
             pthread_mutex_unlock(&mutex);
             break;
         }
 
-        /* Wake up the producer */
         pthread_mutex_unlock(&mutex);
     }
     return NULL;
@@ -209,7 +211,7 @@ int main(int argc, char *argv[]) {
     char *endptr;
     long lnum_threads = strtol(argv[1], &endptr, 10);
     if (lnum_threads <= 0 ||lnum_threads > INT_MAX || endptr == argv[1]) {
-        // handle invalid input thread count
+        /* handle invalid input thread count */
         printf("Invalid thread number, exiting.\n");
         return EXIT_FAILURE;
     }
@@ -218,7 +220,7 @@ int main(int argc, char *argv[]) {
 
     long ldifficulty = strtol(argv[2], &endptr, 10);
     if (ldifficulty < 0 || ldifficulty > 32 || endptr == argv[2]) {
-        // handle invalid input difficulty level
+        /* handle invalid input difficulty level */
         printf("Invalid difficulty, exiting\n");
         return EXIT_FAILURE;
     }
@@ -278,6 +280,7 @@ int main(int argc, char *argv[]) {
         pthread_mutex_unlock(&mutex);
     }
 
+    /* clean up */
     for (int idx = 0; idx < num_threads; idx++)
     {
         pthread_join(workers[idx], NULL);
