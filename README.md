@@ -44,6 +44,7 @@ Note that the implementation is specific for this project, the task queue only s
 
 - Running ```miner```: pass in the thread count, difficulty level, and the input block to mine.
     - thread count: the count for the worker thread, at least one. 
+        - note that the thread count is not checked for the upper bound, the user has to make sure they have enough cores to get the desired efficiency.
     - difficulty level: the number of leading zeros, range from 0-32 (inclusive).
     - data block: the prefix of the nonce, data block + nonce together provide the sha1sum that matches the difficulty.  
 
@@ -152,7 +153,7 @@ For more detailed testing, please refer to below:
 
 # Test record
 
-In this project I also included a runner.sh file to run test for a varity of input to get a better understanding of the multi-thread program efficiency. 
+In this project I also included a runner.sh file to run test for a varity of input to get a better understanding of the multi-thread program efficiency. To run the runner script, make sure you have more than 8 cores to reproduce the result. 
 
 The following table is an exmaple output of the runner. 
 
